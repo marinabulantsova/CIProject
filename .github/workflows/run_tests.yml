@@ -82,7 +82,7 @@ jobs:
     outputs:
       first_test: ${{ steps.first_test.outcome }}
       second_test: ${{ steps.second_test.outcome }}
-      all_test: ${{ steps.all_test.outcome }}
+      all: ${{ steps.all.outcome }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
