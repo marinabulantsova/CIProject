@@ -101,18 +101,21 @@ jobs:
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v4
 
-      - name: first_test
+      - name: Run first_test
+        id: first_test
         if: github.event.inputs.deployment_target == 'first_test'
         run: pytest tests/test_button.py::test_button_exist --alluredir=allure-results
         # продолжать, если ошибка
         continue-on-error: true
 
-      - name: second_test
+      - name: Run second_test
+        id: second_test
         if: github.event.inputs.deployment_target == 'second_test'
         run: pytest tests/test_button.py::test_button_exist_2 --alluredir=allure-results
         continue-on-error: true
 
-      - name: all
+      - name: Run all
+        id: all
         if: github.event.inputs.deployment_target == 'all'
         run: pytest --alluredir=allure-results
         continue-on-error: true
