@@ -175,11 +175,11 @@ jobs:
         run: |
           curl --location 'https://api.telegram.org/bot${{ secrets.BOT_TELEGRAM_TOKEN }}/sendMessage' \
           --header 'Content-Type: application/json' \
-          --data '{ "chat_id": 1040685578, "text": "✅ Testing finished. Report is here: https://marinabulantsova.github.io/CIProject/" }'
+          --data '{ "chat_id": 1040685578, "text": "✅ Testing finished with success. Report is here: https://marinabulantsova.github.io/CIProject/" }'
 
       - name: send notification to Telegram (failure)
         if: needs.test.outputs.first_test == 'failure' || needs.test.outputs.second_test == 'failure' || needs.test.outputs.all == 'failure'
         run: |
           curl --location 'https://api.telegram.org/bot${{ secrets.BOT_TELEGRAM_TOKEN }}/sendMessage' \
           --header 'Content-Type: application/json' \
-          --data '{ "chat_id": 1040685578, "text": "❌ Testing finished. Report is here: https://marinabulantsova.github.io/CIProject/" }'
+          --data '{ "chat_id": 1040685578, "text": "❌ Testing finished with failure. Report is here: https://marinabulantsova.github.io/CIProject/" }'
