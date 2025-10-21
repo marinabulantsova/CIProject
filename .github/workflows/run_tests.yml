@@ -79,6 +79,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: download-history
+    outputs:
+      first_test: ${{ steps.first_test.outcome }}
+      second_test: ${{ steps.second_test.outcome }}
+      all_test: ${{ steps.all_test.outcome }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -100,6 +104,7 @@ jobs:
       - name: first_test
         if: github.event.inputs.deployment_target == 'first_test'
         run: pytest tests/test_button.py::test_button_exist --alluredir=allure-results
+        # продолжать, если ошибка
         continue-on-error: true
 
       - name: second_test
@@ -164,3 +169,17 @@ jobs:
       - name: Deploy to Github Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: send notification to Telegram (success)
+        if: needs.test.outputs.first_test != 'failure' && needs.test.outputs.second_test != 'failure' && needs.test.outputs.all != 'failure'
+        run: |
+          curl --location 'https://api.telegram.org/bot${{ secrets.BOT_TELEGRAM_TOKEN }}/sendMessage' \
+          --header 'Content-Type: application/json' \
+          --data '{ "chat_id": 1040685578, "text": "✅ Testing finished. Report is here: https://marinabulantsova.github.io/CIProject/" }'
+
+      - name: send notification to Telegram (failure)
+        if: needs.test.outputs.first_test == 'failure' || needs.test.outputs.second_test == 'failure' || needs.test.outputs.all == 'failure'
+        run: |
+          curl --location 'https://api.telegram.org/bot${{ secrets.BOT_TELEGRAM_TOKEN }}/sendMessage' \
+          --header 'Content-Type: application/json' \
+          --data '{ "chat_id": 1040685578, "text": "❌ Testing finished. Report is here: https://marinabulantsova.github.io/CIProject/" }'
